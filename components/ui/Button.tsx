@@ -8,6 +8,7 @@ import {
   TextStyle,
   View,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Spacing, BorderRadius, FontSizes } from '@/constants/theme';
 
 type Variant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -40,11 +41,13 @@ export function Button({
   const variantStyle = styles[variant];
   const sizeStyle = sizes[size];
 
+  const isGradientButton = variant === 'primary' || variant === 'secondary';
+
   return (
     <TouchableOpacity
       onPress={onPress}
       disabled={isDisabled}
-      activeOpacity={0.7}
+      activeOpacity={0.82}
       style={[
         styles.base,
         variantStyle,
@@ -54,7 +57,23 @@ export function Button({
         style,
       ]}
     >
-      {loading ? (
+      {isGradientButton ? (
+        <LinearGradient
+          colors={variant === 'primary' ? [Colors.primary[600], Colors.primary[500]] : [Colors.secondary[600], Colors.secondary[500]]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[styles.gradient, sizeStyle]}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" size="small" />
+          ) : (
+            <View style={styles.content}>
+              {icon}
+              <Text style={[styles.label, textSizes[size], styles.labelSolid]}>{label}</Text>
+            </View>
+          )}
+        </LinearGradient>
+      ) : loading ? (
         <ActivityIndicator
           color={variant === 'outline' || variant === 'ghost' ? Colors.primary[600] : '#fff'}
           size="small"
@@ -85,7 +104,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
+    minHeight: 48,
+    overflow: 'hidden',
   } as ViewStyle,
+  gradient: {
+    width: '100%',
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    minHeight: 48,
+    paddingHorizontal: Spacing.lg,
+    shadowColor: Colors.primary[800],
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
+    elevation: 3,
+  },
   primary: {
     backgroundColor: Colors.primary[600],
   },
@@ -95,7 +130,7 @@ const styles = StyleSheet.create({
   outline: {
     backgroundColor: 'transparent',
     borderWidth: 1.5,
-    borderColor: Colors.primary[400],
+    borderColor: Colors.primary[200],
   },
   ghost: {
     backgroundColor: 'transparent',
@@ -126,9 +161,9 @@ const styles = StyleSheet.create({
 });
 
 const sizes: Record<Size, ViewStyle> = {
-  sm: { paddingVertical: Spacing.sm, paddingHorizontal: Spacing.md },
+  sm: { paddingVertical: Spacing.sm, paddingHorizontal: Spacing.md, minHeight: 40 },
   md: { paddingVertical: 14, paddingHorizontal: Spacing.lg },
-  lg: { paddingVertical: 18, paddingHorizontal: Spacing.xl },
+  lg: { paddingVertical: 18, paddingHorizontal: Spacing.xl, minHeight: 56 },
 };
 
 const textSizes: Record<Size, TextStyle> = {

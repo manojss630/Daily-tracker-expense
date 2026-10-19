@@ -31,6 +31,7 @@ import {
   ClipboardList,
 } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -78,14 +79,15 @@ export default function HomeScreen() {
   if (loading) return <LoadingState label="Loading dashboard..." fullScreen />;
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-    >
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
       <LinearGradient
-        colors={[Colors.primary[600], Colors.primary[500], Colors.primary[400]]}
+        colors={[Colors.primary[800], Colors.primary[700], Colors.primary[600]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.headerGradient}
@@ -129,7 +131,6 @@ export default function HomeScreen() {
                 icon={<Calendar size={18} color={Colors.secondary[600]} />}
                 color={Colors.secondary[50]}
               />
-              <View style={{ width: Spacing.sm }} />
               <SummaryCard
                 label="Today"
                 value={formatCurrency(summary?.today || 0)}
@@ -144,7 +145,6 @@ export default function HomeScreen() {
                 icon={<FileText size={18} color={Colors.primary[600]} />}
                 color={Colors.primary[50]}
               />
-              <View style={{ width: Spacing.sm }} />
               <SummaryCard
                 label="People"
                 value={String(summary?.peopleCount || 0)}
@@ -252,11 +252,16 @@ export default function HomeScreen() {
           </>
         )}
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.primary[800],
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.neutral[50],
@@ -266,10 +271,10 @@ const styles = StyleSheet.create({
   },
   headerGradient: {
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.xl + 12,
-    paddingBottom: Spacing.lg,
-    borderBottomLeftRadius: BorderRadius.xl,
-    borderBottomRightRadius: BorderRadius.xl,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.xl,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
   },
   headerRow: {
     flexDirection: 'row',
@@ -310,9 +315,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
+    backgroundColor: 'rgba(255,255,255,0.14)',
+    borderColor: 'rgba(255,255,255,0.18)',
+    borderWidth: 1,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg + 2,
+    marginTop: Spacing.md,
   },
   heroLeft: {
     flex: 1,
@@ -344,7 +352,8 @@ const styles = StyleSheet.create({
   },
   summaryGrid: {
     flexDirection: 'row',
-    marginBottom: Spacing.sm + 2,
+    gap: Spacing.sm + 2,
+    marginBottom: Spacing.md,
   },
   quickActions: {
     marginTop: Spacing.md,
@@ -364,14 +373,16 @@ const styles = StyleSheet.create({
   quickActionTile: {
     flex: 1,
     backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: Colors.neutral[100],
     borderRadius: BorderRadius.lg,
     paddingVertical: Spacing.md,
     alignItems: 'center',
     gap: Spacing.sm,
     shadowColor: Colors.neutral[900],
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
+    shadowOpacity: 0.045,
+    shadowRadius: 12,
     elevation: 2,
   },
   quickActionIcon: {

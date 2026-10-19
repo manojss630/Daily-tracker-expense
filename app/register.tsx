@@ -8,6 +8,7 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Spacing, FontSizes, BorderRadius } from '@/constants/theme';
@@ -28,6 +29,7 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [confirmationMessage, setConfirmationMessage] = useState<string | null>(null);
   const submitting = useRef(false);
 
   const validate = (): string | null => {
@@ -57,17 +59,22 @@ export default function RegisterScreen() {
     }
     submitting.current = true;
     setError(null);
+    setConfirmationMessage(null);
     setLoading(true);
     try {
-      const { error: signUpError } = await signUp({
+      const result = await signUp({
         email: email.trim(),
         password,
         fullName: fullName.trim(),
         username: username.trim(),
         phone: phone.trim(),
       });
-      if (signUpError) {
-        setError(getFriendlyError(signUpError));
+      if (result.error) {
+        setError(getFriendlyError(result.error));
+      } else if (result.confirmationRequired) {
+        setConfirmationMessage(
+          'Check your email to confirm your account. Open the confirmation link on this device to sign in.'
+        );
       } else {
         router.replace('/(tabs)');
       }
@@ -80,23 +87,24 @@ export default function RegisterScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
         <LinearGradient
-          colors={[Colors.primary[600], Colors.primary[500], Colors.primary[400]]}
+          colors={[Colors.primary[800], Colors.primary[700], Colors.primary[600]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.header}
         >
           <View style={styles.logoCircle}>
-            <BookOpen size={32} color="#fff" strokeWidth={2.5} />
+            <BookOpen size={30} color="#fff" strokeWidth={2.5} />
           </View>
           <Text style={styles.appName}>SSDM ExpenseBook</Text>
           <Text style={styles.title}>Create Account</Text>
@@ -165,6 +173,11 @@ export default function RegisterScreen() {
               <Text style={styles.errorText}>{error}</Text>
             </View>
           )}
+          {confirmationMessage && (
+            <View style={styles.confirmationBox}>
+              <Text style={styles.confirmationText}>{confirmationMessage}</Text>
+            </View>
+          )}
 
           <Button
             label="Create Account"
@@ -181,30 +194,36 @@ export default function RegisterScreen() {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.primary[800],
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.neutral[50],
   },
   scroll: {
     flexGrow: 1,
-    paddingBottom: Spacing.xl,
+    paddingBottom: Spacing.lg,
   },
   header: {
-    alignItems: 'center',
-    paddingTop: Spacing.xxl,
-    paddingBottom: Spacing.xl,
+    alignItems: 'flex-start',
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.xl + 8,
     borderBottomLeftRadius: BorderRadius.xl,
     borderBottomRightRadius: BorderRadius.xl,
   },
   logoCircle: {
-    width: 64,
-    height: 64,
+    width: 54,
+    height: 54,
     borderRadius: BorderRadius.full,
     backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
@@ -212,14 +231,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   appName: {
-    fontSize: FontSizes.sm,
+    fontSize: FontSizes.xs,
     fontWeight: '700',
     color: 'rgba(255,255,255,0.8)',
-    letterSpacing: 1,
+    letterSpacing: 1.3,
     marginBottom: Spacing.sm,
   },
   title: {
-    fontSize: FontSizes.xxl,
+    fontSize: FontSizes.xxxl,
     fontWeight: '800',
     color: '#fff',
     fontFamily: 'Inter-ExtraBold',
@@ -227,11 +246,22 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: FontSizes.md,
     color: 'rgba(255,255,255,0.75)',
-    marginTop: Spacing.xs,
+    marginTop: Spacing.sm,
   },
   form: {
+    backgroundColor: '#fff',
+    borderRadius: BorderRadius.xl,
+    borderWidth: 1,
+    borderColor: Colors.neutral[100],
+    marginHorizontal: Spacing.md,
+    marginTop: -Spacing.xl,
     padding: Spacing.lg,
-    paddingTop: Spacing.xl,
+    paddingTop: Spacing.lg,
+    shadowColor: Colors.neutral[900],
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.08,
+    shadowRadius: 18,
+    elevation: 5,
   },
   errorBox: {
     backgroundColor: Colors.error[50],
@@ -242,6 +272,16 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: FontSizes.sm,
     color: Colors.error[700],
+    textAlign: 'center',
+  },
+  confirmationBox: {
+    backgroundColor: Colors.success[50],
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+  },
+  confirmationText: {
+    fontSize: FontSizes.sm,
+    color: Colors.success[700],
     textAlign: 'center',
   },
   footer: {

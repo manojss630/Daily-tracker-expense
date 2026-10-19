@@ -21,7 +21,7 @@ interface AuthContextValue {
     fullName: string;
     username: string;
     phone: string;
-  }) => Promise<{ error: string | null }>;
+  }) => Promise<{ error: string | null; confirmationRequired?: boolean }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<{ error: string | null }>;
@@ -168,10 +168,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (data.user.identities?.length === 0) {
           return { error: 'An account with this email already exists. Please log in.' };
         }
-        return {
-          error:
-            'Registration did not create a session. In Supabase, disable email confirmations under Authentication → Sign In / Providers → Email, then try again.',
-        };
+        return { error: null, confirmationRequired: true };
       }
 
       const userId = data.user.id;

@@ -8,6 +8,9 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "android": {
+      "package": "com.ssdm.expensebook"
+    },
     "ios": {
       "supportsTablet": true
     },
@@ -24,6 +27,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ac6702bd-692b-48c9-ada1-48b9842f7c71"
+      }
+    },
+    "owner": "manojsgowda"
   }
 }

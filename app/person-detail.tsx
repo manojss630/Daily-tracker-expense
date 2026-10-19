@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ExpenseRecord } from '@/types';
 import { fetchRecordsByPerson } from '@/services/expenseService';
@@ -11,7 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { Colors, Spacing, FontSizes, BorderRadius } from '@/constants/theme';
 import { formatCurrency, safeNumber } from '@/utils/format';
 import { getFriendlyError } from '@/utils/errors';
-import { ChevronLeft, User, Plus } from 'lucide-react-native';
+import { ChevronLeft, User } from 'lucide-react-native';
 
 export default function PersonDetailScreen() {
   const router = useRouter();
@@ -49,6 +50,7 @@ export default function PersonDetailScreen() {
   if (loading) return <LoadingState label="Loading records..." fullScreen />;
 
   return (
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
@@ -104,10 +106,15 @@ export default function PersonDetailScreen() {
         )
       )}
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.neutral[50],
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.neutral[50],
@@ -139,7 +146,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-SemiBold',
   },
   summaryCard: {
-    backgroundColor: Colors.primary[600],
+    backgroundColor: Colors.primary[800],
     margin: Spacing.lg,
     borderRadius: BorderRadius.xl,
     padding: Spacing.xl,
@@ -149,6 +156,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 12,
     elevation: 5,
+    borderWidth: 1,
+    borderColor: Colors.primary[700],
   },
   summaryIcon: {
     width: 60,

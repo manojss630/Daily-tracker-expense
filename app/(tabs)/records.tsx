@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { ExpenseRecord } from '@/types';
 import { fetchExpenseRecords } from '@/services/expenseService';
@@ -19,7 +20,7 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Colors, Spacing, FontSizes, BorderRadius } from '@/constants/theme';
 import { getFriendlyError } from '@/utils/errors';
-import { Search, SlidersHorizontal, ClipboardList, X } from 'lucide-react-native';
+import { Search, SlidersHorizontal, ClipboardList, X, Plus } from 'lucide-react-native';
 
 type SortMode = 'newest' | 'oldest' | 'highest' | 'lowest' | 'name';
 type DateFilter = 'all' | 'thisMonth' | 'lastMonth' | 'last3Months';
@@ -129,7 +130,22 @@ export default function RecordsScreen() {
   if (loading) return <LoadingState label="Loading records..." fullScreen />;
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
+      <View style={styles.container}>
+      <View style={styles.pageHeader}>
+        <View style={styles.pageHeading}>
+          <Text style={styles.pageTitle}>Expense records</Text>
+          <Text style={styles.pageSubtitle}>Your spending history, all in one place</Text>
+        </View>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => router.push('/record-form')}
+          accessibilityRole="button"
+          accessibilityLabel="Add expense record"
+        >
+          <Plus size={21} color="#fff" />
+        </TouchableOpacity>
+      </View>
       <View style={styles.searchBar}>
         <View style={styles.searchInput}>
           <Search size={18} color={Colors.neutral[400]} />
@@ -321,13 +337,50 @@ export default function RecordsScreen() {
         />
       </Modal>
     </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.neutral[50],
+  },
+  pageHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.md,
+    backgroundColor: '#fff',
+  },
+  pageHeading: {
+    flex: 1,
+  },
+  pageTitle: {
+    fontSize: FontSizes.xxl,
+    fontWeight: '800',
+    color: Colors.neutral[900],
+    fontFamily: 'Inter-ExtraBold',
+  },
+  pageSubtitle: {
+    color: Colors.neutral[500],
+    fontSize: FontSizes.sm,
+    marginTop: Spacing.xs,
+  },
+  addButton: {
+    width: 46,
+    height: 46,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.primary[600],
+    marginLeft: Spacing.md,
   },
   searchBar: {
     flexDirection: 'row',
@@ -335,13 +388,15 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[200],
+    borderBottomColor: Colors.neutral[100],
   },
   searchInput: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.neutral[50],
+    borderWidth: 1,
+    borderColor: Colors.neutral[100],
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     gap: Spacing.sm,

@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { Colors, Spacing, FontSizes, BorderRadius } from '@/constants/theme';
@@ -20,9 +21,6 @@ import {
   AtSign,
   Edit3,
   Lock,
-  Bell,
-  Palette,
-  Coins,
 } from 'lucide-react-native';
 import { getSupabaseClient } from '@/lib/supabase';
 
@@ -39,6 +37,7 @@ export default function ProfileScreen() {
   const [pwdError, setPwdError] = useState<string | null>(null);
   const [pwdSaving, setPwdSaving] = useState(false);
   const [signOutError, setSignOutError] = useState<string | null>(null);
+  const [signOutLoading, setSignOutLoading] = useState(false);
 
   if (loading || profileLoading) return <LoadingState label="Loading profile..." fullScreen />;
 
@@ -92,7 +91,10 @@ export default function ProfileScreen() {
     .toUpperCase();
 
   return (
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Text style={styles.pageTitle}>Your profile</Text>
+      <Text style={styles.pageSubtitle}>Manage your account and personal details</Text>
       <View style={styles.profileHeader}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>{initials}</Text>
@@ -133,13 +135,6 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.settingsCard}>
-        <Text style={styles.settingsTitle}>Settings</Text>
-        <SettingRow icon={<Coins size={18} color={Colors.neutral[500]} />} label="Currency" value="INR \u20B9" />
-        <SettingRow icon={<Palette size={18} color={Colors.neutral[500]} />} label="Theme" value="System" />
-        <SettingRow icon={<Bell size={18} color={Colors.neutral[500]} />} label="Notifications" value="On" />
-      </View>
-
       {signOutError && (
         <View style={styles.errorBox}>
           <Text style={styles.errorText}>{signOutError}</Text>
@@ -149,16 +144,20 @@ export default function ProfileScreen() {
         label="Logout"
         onPress={async () => {
           setSignOutError(null);
+          setSignOutLoading(true);
           try {
             await signOut();
             router.replace('/login');
           } catch (error) {
             setSignOutError(getFriendlyError(error));
+          } finally {
+            setSignOutLoading(false);
           }
         }}
         variant="danger"
         fullWidth
         size="lg"
+        loading={signOutLoading}
         style={{ marginTop: Spacing.lg }}
       />
 
@@ -189,6 +188,7 @@ export default function ProfileScreen() {
         <Button label="Update Password" onPress={handleChangePassword} loading={pwdSaving} fullWidth style={{ marginTop: Spacing.md }} />
       </Modal>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -204,17 +204,11 @@ function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string;
   );
 }
 
-function SettingRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
-  return (
-    <View style={styles.infoRow}>
-      {icon}
-      <Text style={styles.settingLabel}>{label}</Text>
-      <Text style={styles.settingValue}>{value}</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.neutral[50],
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.neutral[50],
@@ -222,6 +216,17 @@ const styles = StyleSheet.create({
   content: {
     padding: Spacing.lg,
     paddingBottom: Spacing.xxl,
+  },
+  pageTitle: {
+    fontSize: FontSizes.xxl,
+    fontFamily: 'Inter-ExtraBold',
+    fontWeight: '800',
+    color: Colors.neutral[900],
+  },
+  pageSubtitle: {
+    fontSize: FontSizes.sm,
+    color: Colors.neutral[500],
+    marginTop: Spacing.xs,
   },
   profileHeader: {
     alignItems: 'center',
@@ -257,6 +262,8 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     padding: Spacing.md + 2,
     marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.neutral[100],
     shadowColor: Colors.neutral[900],
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -290,6 +297,8 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     padding: Spacing.md + 2,
     marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.neutral[100],
     shadowColor: Colors.neutral[900],
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -314,35 +323,6 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.md,
     color: Colors.neutral[800],
     fontWeight: '600',
-  },
-  settingsCard: {
-    backgroundColor: '#fff',
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md + 2,
-    marginBottom: Spacing.md,
-    shadowColor: Colors.neutral[900],
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    elevation: 2,
-  },
-  settingsTitle: {
-    fontSize: FontSizes.sm,
-    fontWeight: '700',
-    color: Colors.neutral[600],
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: Spacing.sm,
-  },
-  settingLabel: {
-    flex: 1,
-    fontSize: FontSizes.md,
-    color: Colors.neutral[700],
-    marginLeft: Spacing.md,
-  },
-  settingValue: {
-    fontSize: FontSizes.sm,
-    color: Colors.neutral[500],
   },
   errorBox: {
     backgroundColor: Colors.error[50],

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import {
   ExpenseRecordDraft,
@@ -151,9 +152,10 @@ export default function RecordFormScreen() {
   if (loading) return <LoadingState label="Loading record..." fullScreen />;
 
   return (
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
@@ -319,10 +321,15 @@ export default function RecordFormScreen() {
         </View>
       </Modal>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.neutral[50],
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.neutral[50],

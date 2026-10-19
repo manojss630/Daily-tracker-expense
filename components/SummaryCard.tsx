@@ -24,13 +24,15 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
     borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.neutral[100],
+    padding: Spacing.md + 2,
     alignItems: 'flex-start',
     flex: 1,
     shadowColor: Colors.neutral[900],
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
+    shadowOpacity: 0.045,
+    shadowRadius: 12,
     elevation: 2,
   },
   iconBox: {

@@ -83,6 +83,9 @@ export function Input({
           <TouchableOpacity
             onPress={() => setShowPassword(!showPassword)}
             style={styles.toggleIcon}
+            accessibilityRole="button"
+            accessibilityLabel={showPassword ? 'Hide password' : 'Show password'}
+            hitSlop={8}
           >
             {showPassword ? (
               <EyeOff size={20} color={Colors.neutral[400]} />
@@ -110,16 +113,22 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.neutral[50],
-    borderWidth: 1.5,
+    backgroundColor: '#f8fbfa',
+    borderWidth: 1,
     borderColor: Colors.neutral[200],
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing.md,
-    minHeight: 52,
+    minHeight: 54,
+    shadowColor: Colors.neutral[900],
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 1,
   } as ViewStyle,
   focused: {
     borderColor: Colors.primary[400],
     backgroundColor: '#fff',
+    shadowOpacity: 0.08,
   } as ViewStyle,
   errorBorder: {
     borderColor: Colors.error[400],
@@ -136,6 +145,7 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.md,
     color: Colors.neutral[800],
     paddingVertical: Spacing.sm + 2,
+    textAlignVertical: 'center',
   } as TextStyle,
   toggleIcon: {
     padding: Spacing.xs,

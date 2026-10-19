@@ -8,6 +8,7 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Spacing, FontSizes, BorderRadius } from '@/constants/theme';
@@ -93,24 +94,25 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scroll}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 12}
       >
+        <ScrollView
+          contentContainerStyle={styles.scroll}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
         <LinearGradient
-          colors={[Colors.primary[600], Colors.primary[500], Colors.primary[400]]}
+          colors={[Colors.primary[800], Colors.primary[700], Colors.primary[600]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.header}
         >
           <View style={styles.logoCircle}>
-            <BookOpen size={32} color="#fff" strokeWidth={2.5} />
+            <BookOpen size={30} color="#fff" strokeWidth={2.5} />
           </View>
           <Text style={styles.appName}>SSDM ExpenseBook</Text>
           <Text style={styles.title}>Welcome Back</Text>
@@ -183,45 +185,51 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.primary[800],
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.neutral[50],
   },
   scroll: {
     flexGrow: 1,
-    paddingBottom: Spacing.xl,
+    paddingBottom: Spacing.lg,
   },
   header: {
-    alignItems: 'center',
-    paddingTop: Spacing.xxl + 16,
-    paddingBottom: Spacing.xl,
+    alignItems: 'flex-start',
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.xl + 8,
     borderBottomLeftRadius: BorderRadius.xl,
     borderBottomRightRadius: BorderRadius.xl,
   },
   logoCircle: {
-    width: 64,
-    height: 64,
+    width: 54,
+    height: 54,
     borderRadius: BorderRadius.full,
     backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
   },
   appName: {
-    fontSize: FontSizes.sm,
+    fontSize: FontSizes.xs,
     fontWeight: '700',
     color: 'rgba(255,255,255,0.8)',
-    letterSpacing: 1,
+    letterSpacing: 1.3,
     marginBottom: Spacing.sm,
   },
   title: {
-    fontSize: FontSizes.xxl,
+    fontSize: FontSizes.xxxl,
     fontWeight: '800',
     color: '#fff',
     fontFamily: 'Inter-ExtraBold',
@@ -229,11 +237,22 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: FontSizes.md,
     color: 'rgba(255,255,255,0.75)',
-    marginTop: Spacing.xs,
+    marginTop: Spacing.sm,
   },
   form: {
+    backgroundColor: '#fff',
+    borderRadius: BorderRadius.xl,
+    borderWidth: 1,
+    borderColor: Colors.neutral[100],
+    marginHorizontal: Spacing.md,
+    marginTop: -Spacing.xl,
     padding: Spacing.lg,
-    paddingTop: Spacing.xl,
+    paddingTop: Spacing.lg,
+    shadowColor: Colors.neutral[900],
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.08,
+    shadowRadius: 18,
+    elevation: 5,
   },
   successBox: {
     backgroundColor: Colors.success[50],

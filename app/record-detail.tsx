@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import { ExpenseRecord, ExpenseItem } from '@/types';
@@ -125,6 +126,7 @@ export default function RecordDetailScreen() {
   const total = items.reduce((sum, item) => sum + safeNumber(item.amount), 0);
 
   return (
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
@@ -276,10 +278,15 @@ export default function RecordDetailScreen() {
         </View>
       </Modal>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.neutral[50],
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.neutral[50],

@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Colors, Spacing, BorderRadius, FontSizes } from '@/constants/theme';
+import { Colors, Spacing, BorderRadius, FontSizes, CATEGORY_ICONS } from '@/constants/theme';
 import { ExpenseItemDraft } from '@/types';
 import { formatCurrency, safeNumber } from '@/utils/format';
-import { CATEGORY_ICONS } from '@/constants/theme';
 import { Trash2 } from 'lucide-react-native';
 
 interface ExpenseItemRowProps {
